@@ -1,0 +1,2 @@
+# -BioGraph-AI-Powered-CRISPR-Guide-RNA-Recommendation-System
+Developed a multi-agent AI system that analyzes gene sequences and recommends optimal CRISPR guide RNAs. Implemented PAM detection, guide RNA generation, off-target analysis, efficiency prediction, and risk assessment workflows. Built FastAPI APIs with JWT authentication, experiment tracking, and PostgreSQL integration. Added Docker deployment.
