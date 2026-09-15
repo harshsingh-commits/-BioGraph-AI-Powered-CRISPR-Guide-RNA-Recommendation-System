@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: biograph
+      POSTGRES_USER: biograph
+      POSTGRES_PASSWORD: biograph
+    ports:
+      - "5432:5432"
+    volumes:
+      - biograph-postgres:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biograph -d biograph"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
+    environment:
+      DATABASE_URL: postgresql+psycopg://biograph:biograph@postgres:5432/biograph
+      BIOGRAPH_TRACKING_BACKEND: jsonl
+      BIOGRAPH_JWT_SECRET: compose-development-secret-change-me
+      BIOGRAPH_ALLOW_DEV_USERS: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: .
+    command: streamlit run app.py --server.address=0.0.0.0 --server.port=8501
+    environment:
+      BIOGRAPH_API_URL: http://backend:8000
+      BIOGRAPH_API_USER: researcher
+      BIOGRAPH_API_PASSWORD: researcher
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  biograph-postgres:

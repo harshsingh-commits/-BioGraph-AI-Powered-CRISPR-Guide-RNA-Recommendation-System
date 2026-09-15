@@ -1,0 +1,15 @@
+langgraph
+langchain
+biopython
+streamlit
+pandas
+reportlab
+numpy
+fastapi
+uvicorn[standard]
+python-multipart
+requests
+sqlalchemy
+psycopg[binary]
+PyJWT
+prometheus-client

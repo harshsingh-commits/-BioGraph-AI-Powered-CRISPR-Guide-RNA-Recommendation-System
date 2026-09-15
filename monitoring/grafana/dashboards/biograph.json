@@ -1,0 +1,11 @@
+{
+  "title": "BioGraph Operations",
+  "schemaVersion": 39,
+  "panels": [
+    {"type": "stat", "title": "Analyses", "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}, "targets": [{"expr": "biograph_analysis_total"}]},
+    {"type": "stat", "title": "Guides Generated", "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}, "targets": [{"expr": "biograph_guides_generated_total"}]},
+    {"type": "stat", "title": "Errors", "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}, "targets": [{"expr": "biograph_errors_total"}]},
+    {"type": "timeseries", "title": "Analysis Runtime", "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}, "targets": [{"expr": "rate(biograph_analysis_runtime_seconds_sum[5m]) / rate(biograph_analysis_runtime_seconds_count[5m])"}]},
+    {"type": "timeseries", "title": "Error Rate", "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}, "targets": [{"expr": "rate(biograph_errors_total[5m])"}]}
+  ]
+}
